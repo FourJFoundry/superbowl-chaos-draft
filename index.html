@@ -1,0 +1,2277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Bowl LX Chaos Draft</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Color Palette - Football Field Theme */
+        :root {
+            --field-green: #5A6B4A;
+            --chalk-white: #F5F5F0;
+            --patriots-blue: #002244;
+            --seahawks-navy: #002244;
+            --alert-orange: #FF6B35;
+            --yard-line: #E8E8E0;
+            --stroke: 2px;
+            --radius: 6px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', 'Inter', -apple-system, system-ui, sans-serif;
+            background: #8B9B7A;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Playbook Grid Pattern Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(232, 232, 224, 0.15) 49px, rgba(232, 232, 224, 0.15) 50px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Decorative X's and O's */
+        body::after {
+            content: 'X O X O';
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: 900;
+            color: rgba(245, 245, 240, 0.1);
+            letter-spacing: 12px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--chalk-white);
+            border: var(--stroke) solid var(--patriots-blue);
+            border-radius: var(--radius);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header - Playbook Style */
+        .header {
+            background: var(--patriots-blue);
+            color: var(--chalk-white);
+            padding: 40px 30px;
+            border-bottom: var(--stroke) solid var(--field-green);
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--alert-orange);
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            width: 30px;
+            height: 30px;
+            background: transparent;
+            border: 3px solid var(--alert-orange);
+            transform: rotate(45deg);
+            opacity: 0.3;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 900;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .header .subtitle {
+            font-size: 1em;
+            font-weight: 500;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .view {
+            display: none;
+        }
+        
+        .view.active {
+            display: block;
+        }
+        
+        /* Buttons - Transit Stop Style */
+        .btn {
+            background: var(--patriots-blue);
+            color: var(--chalk-white);
+            border: var(--stroke) solid var(--patriots-blue);
+            padding: 14px 28px;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        
+        .btn:hover {
+            background: var(--chalk-white);
+            color: var(--patriots-blue);
+        }
+        
+        .btn:disabled {
+            background: var(--yard-line);
+            border-color: var(--yard-line);
+            color: #999;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: var(--chalk-white);
+            color: var(--patriots-blue);
+            border: var(--stroke) solid var(--patriots-blue);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--patriots-blue);
+            color: var(--chalk-white);
+        }
+        
+        .btn-success {
+            background: var(--field-green);
+            border-color: var(--field-green);
+            color: var(--chalk-white);
+        }
+        
+        .btn-success:hover {
+            background: var(--chalk-white);
+            color: var(--field-green);
+            border-color: var(--field-green);
+        }
+        
+        .btn-danger {
+            background: var(--alert-orange);
+            border-color: var(--alert-orange);
+            color: var(--chalk-white);
+        }
+        
+        .btn-danger:hover {
+            background: var(--chalk-white);
+            color: var(--alert-orange);
+            border-color: var(--alert-orange);
+        }
+        
+        /* Setup View - Roster Card Style */
+        .player-setup {
+            margin-top: 30px;
+        }
+        
+        .player-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .player-card {
+            background: var(--chalk-white);
+            border: var(--stroke) solid var(--patriots-blue);
+            border-radius: var(--radius);
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .player-card.completed {
+            border-color: var(--field-green);
+        }
+        
+        .player-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            position: relative;
+        }
+        
+        .player-card.completed .player-item {
+            padding: 12px 16px;
+        }
+        
+        .player-item::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--alert-orange);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .player-card.completed .player-item::before {
+            background: var(--field-green);
+            width: 6px;
+            height: 6px;
+        }
+        
+        .player-item input {
+            flex: 1;
+            padding: 12px 12px 12px 20px;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--patriots-blue);
+        }
+        
+        .player-item input:focus {
+            outline: none;
+        }
+        
+        .player-item-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .completion-badge {
+            display: none;
+            background: var(--field-green);
+            color: var(--chalk-white);
+            padding: 4px 12px;
+            border-radius: var(--radius);
+            font-size: 0.8em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .player-card.completed .completion-badge {
+            display: block;
+        }
+        
+        .player-item button {
+            margin-left: 0;
+        }
+        
+        /* Common Picks - Play Card Style */
+        .common-picks-form {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .pick-section {
+            margin: 24px 0;
+            padding: 24px;
+            background: var(--chalk-white);
+            border: var(--stroke) solid var(--patriots-blue);
+            border-radius: var(--radius);
+            position: relative;
+        }
+        
+        .pick-section::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 24px;
+            width: 16px;
+            height: 16px;
+            background: var(--alert-orange);
+            border-radius: 50%;
+        }
+        
+        .pick-section h3 {
+            color: var(--patriots-blue);
+            margin-bottom: 16px;
+            font-size: 1.2em;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .pick-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .pick-option {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            background: var(--chalk-white);
+            border: var(--stroke) solid var(--yard-line);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .pick-option:hover {
+            border-color: var(--patriots-blue);
+        }
+        
+        .pick-option input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: var(--stroke) solid var(--patriots-blue);
+            border-radius: 50%;
+            margin-right: 16px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .pick-option input[type="radio"]:checked {
+            background: var(--patriots-blue);
+        }
+        
+        .pick-option input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: var(--alert-orange);
+            border-radius: 50%;
+        }
+        
+        .pick-option.selected {
+            border-color: var(--patriots-blue);
+            background: var(--chalk-white);
+        }
+        
+        .pick-option span {
+            font-weight: 600;
+            color: var(--patriots-blue);
+        }
+        
+        /* Draft View - Play Diagram Style */
+        .draft-status {
+            background: var(--patriots-blue);
+            color: var(--chalk-white);
+            padding: 24px;
+            border: var(--stroke) solid var(--patriots-blue);
+            border-radius: var(--radius);
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .draft-status::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            right: 24px;
+            width: 60px;
+            height: 2px;
+            background: var(--alert-orange);
+        }
+        
+        .draft-status::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            right: 78px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid var(--alert-orange);
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+        }
+        
+        .draft-status h3 {
+            margin-bottom: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .timer {
+            font-size: 3em;
+            font-weight: 900;
+            font-variant-numeric: tabular-nums;
+            color: var(--chalk-white);
+            margin: 12px 0;
+            letter-spacing: -2px;
+        }
+        
+        .timer.warning {
+            color: var(--alert-orange);
+        }
+        
+        .timer.danger {
+            color: var(--alert-orange);
+            animation: pulse 0.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .current-picker {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin: 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .draft-pool {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .category-section {
+            border: var(--stroke) solid var(--patriots-blue);
+            border-radius: var(--radius);
+            background: var(--chalk-white);
+            position: relative;
+        }
+        
+        .category-header {
+            background: var(--patriots-blue);
+            color: var(--chalk-white);
+            padding: 16px 20px;
+            font-weight: 900;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: var(--stroke) solid var(--patriots-blue);
+        }
+        
+        .category-items {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .draft-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: var(--chalk-white);
+            border: var(--stroke) solid var(--yard-line);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .draft-item::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--field-green);
+            border-radius: 50%;
+        }
+        
+        .draft-item:hover {
+            border-color: var(--patriots-blue);
+        }
+        
+        .draft-item.unavailable {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .draft-item.unavailable::before {
+            background: var(--yard-line);
+        }
+        
+        .draft-item.unavailable:hover {
+            border-color: var(--yard-line);
+        }
+        
+        .item-info {
+            flex: 1;
+            padding-left: 12px;
+        }
+        
+        .item-name {
+            font-weight: 700;
+            color: var(--patriots-blue);
+            margin-bottom: 2px;
+        }
+        
+        .item-meta {
+            font-size: 0.85em;
+            color: var(--field-green);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .item-points {
+            background: var(--patriots-blue);
+            color: var(--chalk-white);
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            font-weight: 900;
+            font-variant-numeric: tabular-nums;
+            margin-right: 8px;
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .multi-pick-badge {
+            background: var(--alert-orange);
+            color: var(--chalk-white);
+            padding: 4px 10px;
+            border-radius: var(--radius);
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-right: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Scoring View - Route Diagram Style */
+        .scoring-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .scoring-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--chalk-white);
+            border: var(--stroke) solid var(--yard-line);
+            border-radius: var(--radius);
+            position: relative;
+        }
+        
+        .scoring-item::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border: 2px solid var(--yard-line);
+            border-radius: 50%;
+            background: transparent;
+        }
+        
+        .scoring-item.completed {
+            border-color: var(--field-green);
+        }
+        
+        .scoring-item.completed::before {
+            background: var(--field-green);
+            border-color: var(--field-green);
+        }
+        
+        .item-info {
+            padding-left: 16px;
+        }
+        
+        .toggle-btn {
+            width: 50px;
+            height: 26px;
+            background: var(--yard-line);
+            border: var(--stroke) solid var(--yard-line);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .toggle-btn.active {
+            background: var(--field-green);
+            border-color: var(--field-green);
+        }
+        
+        .toggle-btn::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: var(--chalk-white);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .toggle-btn.active::after {
+            left: 26px;
+        }
+        
+        /* Leaderboard - Formation Diagram Style */
+        .leaderboard {
+            margin-top: 30px;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin: 12px 0;
+            background: var(--chalk-white);
+            border: var(--stroke) solid var(--patriots-blue);
+            border-radius: var(--radius);
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .leaderboard-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: var(--patriots-blue);
+            border-radius: 50%;
+        }
+        
+        .leaderboard-item:hover {
+            border-color: var(--field-green);
+        }
+        
+        .leaderboard-item.first {
+            border-color: var(--alert-orange);
+            border-width: 3px;
+        }
+        
+        .leaderboard-item.first::before {
+            background: var(--alert-orange);
+            width: 16px;
+            height: 16px;
+            left: -8px;
+        }
+        
+        .leaderboard-item.second {
+            border-color: var(--field-green);
+        }
+        
+        .leaderboard-item.second::before {
+            background: var(--field-green);
+        }
+        
+        .leaderboard-item.third {
+            border-color: var(--field-green);
+            opacity: 0.8;
+        }
+        
+        .leaderboard-item.third::before {
+            background: var(--field-green);
+            opacity: 0.8;
+        }
+        
+        .rank {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: var(--patriots-blue);
+            margin-right: 24px;
+            font-variant-numeric: tabular-nums;
+            min-width: 60px;
+        }
+        
+        .player-info {
+            flex: 1;
+        }
+        
+        .player-name {
+            font-size: 1.3em;
+            font-weight: 900;
+            color: var(--patriots-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+        
+        .player-name:hover {
+            color: var(--alert-orange);
+            text-decoration: underline;
+        }
+        
+        .player-items {
+            font-size: 0.9em;
+            color: var(--field-green);
+            margin-top: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .player-score {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: var(--patriots-blue);
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        h2 {
+            position: relative;
+            padding-bottom: 16px;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--alert-orange);
+        }
+        
+        /* Turn Announcement Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 34, 68, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--chalk-white);
+            border: 4px solid var(--alert-orange);
+            border-radius: var(--radius);
+            padding: 50px 60px;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--alert-orange);
+            border-radius: 50%;
+        }
+        
+        .modal-content h2 {
+            font-size: 1.2em;
+            color: var(--field-green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .modal-content h2::after {
+            display: none;
+        }
+        
+        .modal-content .player-name-large {
+            font-size: 3em;
+            font-weight: 900;
+            color: var(--patriots-blue);
+            margin: 20px 0;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+        
+        .modal-content .pick-info {
+            font-size: 1.1em;
+            color: var(--field-green);
+            margin: 20px 0;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .modal-content .btn {
+            margin-top: 30px;
+            font-size: 1.2em;
+            padding: 18px 40px;
+        }
+        
+        /* Draft Sidebar */
+        .draft-container {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .draft-sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+        
+        .draft-main {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .sidebar-section {
+            background: var(--chalk-white);
+            border: var(--stroke) solid var(--patriots-blue);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .sidebar-section h3 {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--patriots-blue);
+            font-weight: 900;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--alert-orange);
+        }
+        
+        .round-info {
+            font-size: 2em;
+            font-weight: 900;
+            color: var(--patriots-blue);
+            text-align: center;
+            margin: 12px 0;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .player-status-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .player-status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--chalk-white);
+            border: var(--stroke) solid var(--yard-line);
+            border-radius: var(--radius);
+            position: relative;
+        }
+        
+        .player-status-item.active {
+            border-color: var(--alert-orange);
+            background: rgba(255, 107, 53, 0.05);
+        }
+        
+        .player-status-item::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--field-green);
+            border-radius: 50%;
+        }
+        
+        .player-status-item.active::before {
+            background: var(--alert-orange);
+            width: 8px;
+            height: 8px;
+        }
+        
+        .player-status-name {
+            font-weight: 700;
+            color: var(--patriots-blue);
+            font-size: 0.9em;
+            padding-left: 10px;
+            flex: 1;
+        }
+        
+        .player-status-picks {
+            font-weight: 900;
+            color: var(--field-green);
+            font-size: 0.85em;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .player-status-item.active .player-status-picks {
+            color: var(--alert-orange);
+        }
+        
+        /* Common Picks in Setup */
+        .player-common-picks {
+            padding: 16px;
+            background: var(--chalk-white);
+            border-top: var(--stroke) solid var(--yard-line);
+            transition: all 0.3s;
+            overflow: hidden;
+            max-height: 500px;
+        }
+        
+        .player-common-picks.collapsed {
+            max-height: 0;
+            padding: 0;
+            border: none;
+            opacity: 0;
+        }
+        
+        .common-picks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .common-picks-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .player-common-picks h4 {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--patriots-blue);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .btn-done {
+            padding: 6px 16px;
+            font-size: 0.85em;
+            background: var(--field-green);
+            border-color: var(--field-green);
+        }
+        
+        .btn-done:hover {
+            background: var(--chalk-white);
+            color: var(--field-green);
+        }
+        
+        .btn-edit {
+            padding: 6px 16px;
+            font-size: 0.85em;
+        }
+        
+        .common-pick-mini {
+            margin: 0;
+        }
+        
+        .common-pick-mini label {
+            display: block;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--field-green);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .common-pick-mini select {
+            width: 100%;
+            padding: 8px 10px;
+            border: var(--stroke) solid var(--yard-line);
+            border-radius: var(--radius);
+            background: var(--chalk-white);
+            color: var(--patriots-blue);
+            font-weight: 600;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+        
+        .common-pick-mini select:focus {
+            outline: none;
+            border-color: var(--patriots-blue);
+        }
+        
+        /* Combined Scoring & Leaderboard Layout */
+        .scoring-leaderboard-container {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .scoring-section {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .leaderboard-section {
+            width: 350px;
+            flex-shrink: 0;
+        }
+        
+        .sticky-leaderboard {
+            position: sticky;
+            top: 20px;
+        }
+        
+        /* Scoring Categories */
+        .scoring-category {
+            margin-bottom: 24px;
+        }
+        
+        .scoring-category-header {
+            background: var(--patriots-blue);
+            color: var(--chalk-white);
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            font-weight: 900;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        
+        .common-picks-scoring {
+            background: var(--chalk-white);
+            border: var(--stroke) solid var(--patriots-blue);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .common-picks-scoring h3 {
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--patriots-blue);
+            font-weight: 900;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--alert-orange);
+        }
+        
+        .common-pick-scoring-item {
+            margin: 16px 0;
+        }
+        
+        .common-pick-scoring-item label {
+            display: block;
+            font-size: 0.9em;
+            font-weight: 700;
+            color: var(--patriots-blue);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .common-pick-scoring-item select {
+            width: 100%;
+            padding: 10px 12px;
+            border: var(--stroke) solid var(--yard-line);
+            border-radius: var(--radius);
+            background: var(--chalk-white);
+            color: var(--patriots-blue);
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        
+        .common-pick-scoring-item select:focus {
+            outline: none;
+            border-color: var(--patriots-blue);
+        }
+        
+        /* Player List Under Scoring Items */
+        .item-players {
+            font-size: 0.85em;
+            color: var(--field-green);
+            margin-top: 6px;
+            font-weight: 600;
+            font-style: italic;
+        }
+        
+        /* Player Picks Modal */
+        .player-picks-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 34, 68, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .player-picks-modal.active {
+            display: flex;
+        }
+        
+        .player-picks-content {
+            background: var(--chalk-white);
+            border: 3px solid var(--patriots-blue);
+            border-radius: var(--radius);
+            padding: 30px;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .player-picks-content h2 {
+            font-size: 1.8em;
+            font-weight: 900;
+            color: var(--patriots-blue);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .player-picks-content h2::after {
+            display: none;
+        }
+        
+        .picks-section {
+            margin: 20px 0;
+        }
+        
+        .picks-section h3 {
+            font-size: 1em;
+            font-weight: 900;
+            color: var(--field-green);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--alert-orange);
+        }
+        
+        .pick-item {
+            padding: 8px 12px;
+            margin: 6px 0;
+            background: var(--chalk-white);
+            border: var(--stroke) solid var(--yard-line);
+            border-radius: var(--radius);
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--patriots-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .pick-points {
+            background: var(--patriots-blue);
+            color: var(--chalk-white);
+            padding: 3px 8px;
+            border-radius: var(--radius);
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+        
+        .close-modal-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            font-size: 2em;
+            color: var(--patriots-blue);
+            cursor: pointer;
+            font-weight: 300;
+            line-height: 1;
+        }
+        
+        .close-modal-btn:hover {
+            color: var(--alert-orange);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .draft-container {
+                flex-direction: column;
+            }
+            
+            .draft-sidebar {
+                width: 100%;
+            }
+            
+            .scoring-leaderboard-container {
+                flex-direction: column;
+            }
+            
+            .leaderboard-section {
+                width: 100%;
+            }
+            
+            .sticky-leaderboard {
+                position: static;
+            }
+            
+            .common-picks-content {
+                grid-template-columns: 1fr;
+            }
+        
+            body {
+                padding: 12px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 24px 16px;
+            }
+            
+            .leaderboard-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .rank {
+                margin-right: 0;
+                margin-bottom: 12px;
+            }
+            
+            .player-score {
+                margin-top: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Super Bowl LX</h1>
+            <div class="subtitle">Chaos Draft • Patriots vs Seahawks</div>
+        </div>
+        
+        <div class="content">
+            <!-- Setup View -->
+            <div id="setupView" class="view active">
+                <h2 style="font-size: 2em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--patriots-blue); margin-bottom: 8px;">Roster Setup</h2>
+                <p style="color: var(--field-green); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em; margin-bottom: 30px;">Add 2-15 Players to Begin</p>
+                <div class="player-setup">
+                    <div id="playerList" class="player-list"></div>
+                    <button class="btn" onclick="addPlayer()">+ Add Player</button>
+                    <div class="nav-buttons">
+                        <button class="btn btn-success" onclick="startDraft()" id="startBtn">Start Draft →</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Draft View -->
+            <div id="draftView" class="view">
+                <div class="draft-container">
+                    <div class="draft-sidebar">
+                        <div class="sidebar-section">
+                            <h3>Round</h3>
+                            <div class="round-info"><span id="sidebarCurrentRound">1</span> / <span id="sidebarTotalRounds">7</span></div>
+                        </div>
+                        
+                        <div class="sidebar-section">
+                            <h3>Draft Order</h3>
+                            <div id="playerStatusList" class="player-status-list"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="draft-main">
+                        <div id="draftPool" class="draft-pool"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Scoring & Leaderboard View -->
+            <div id="scoringView" class="view">
+                <h2 style="font-size: 2em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--patriots-blue); margin-bottom: 30px;">Game Day</h2>
+                
+                <div class="scoring-leaderboard-container">
+                    <div class="scoring-section">
+                        <!-- Common Picks Scoring -->
+                        <div class="common-picks-scoring">
+                            <h3>Common Picks Results</h3>
+                            
+                            <div class="common-pick-scoring-item">
+                                <label>First Commercial (5 pts)</label>
+                                <select id="commercialResult" onchange="updateCommonPickResult('commercial', this.value)">
+                                    <option value="">-- Not Yet Decided --</option>
+                                    <option value="Beer">Beer</option>
+                                    <option value="Car/Truck">Car/Truck</option>
+                                    <option value="Tech/AI">Tech/AI</option>
+                                </select>
+                                <div class="item-players" id="commercialPlayers"></div>
+                            </div>
+                            
+                            <div class="common-pick-scoring-item">
+                                <label>Q1 Leader (5 pts)</label>
+                                <select id="q1LeaderResult" onchange="updateCommonPickResult('q1Leader', this.value)">
+                                    <option value="">-- Not Yet Decided --</option>
+                                    <option value="Patriots">Patriots</option>
+                                    <option value="Seahawks">Seahawks</option>
+                                    <option value="Tied">Tied</option>
+                                </select>
+                                <div class="item-players" id="q1LeaderPlayers"></div>
+                            </div>
+                            
+                            <div class="common-pick-scoring-item">
+                                <label>Q2 Leader / Halftime (5 pts)</label>
+                                <select id="q2LeaderResult" onchange="updateCommonPickResult('q2Leader', this.value)">
+                                    <option value="">-- Not Yet Decided --</option>
+                                    <option value="Patriots">Patriots</option>
+                                    <option value="Seahawks">Seahawks</option>
+                                    <option value="Tied">Tied</option>
+                                </select>
+                                <div class="item-players" id="q2LeaderPlayers"></div>
+                            </div>
+                            
+                            <div class="common-pick-scoring-item">
+                                <label>Q3 Leader (5 pts)</label>
+                                <select id="q3LeaderResult" onchange="updateCommonPickResult('q3Leader', this.value)">
+                                    <option value="">-- Not Yet Decided --</option>
+                                    <option value="Patriots">Patriots</option>
+                                    <option value="Seahawks">Seahawks</option>
+                                    <option value="Tied">Tied</option>
+                                </select>
+                                <div class="item-players" id="q3LeaderPlayers"></div>
+                            </div>
+                            
+                            <div class="common-pick-scoring-item">
+                                <label>Game Winner (5 pts)</label>
+                                <select id="winnerResult" onchange="updateCommonPickResult('winner', this.value)">
+                                    <option value="">-- Not Yet Decided --</option>
+                                    <option value="Patriots">Patriots</option>
+                                    <option value="Seahawks">Seahawks</option>
+                                </select>
+                                <div class="item-players" id="winnerPlayers"></div>
+                            </div>
+                            
+                            <div class="common-pick-scoring-item">
+                                <label>Total Points (5 pts)</label>
+                                <select id="totalResult" onchange="updateCommonPickResult('total', this.value)">
+                                    <option value="">-- Not Yet Decided --</option>
+                                    <option value="Over 46">Over 46</option>
+                                    <option value="Under 45">Under 45</option>
+                                </select>
+                                <div class="item-players" id="totalPlayers"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Drafted Items by Category -->
+                        <div id="scoringGrid"></div>
+                        
+                        <div class="nav-buttons">
+                            <button class="btn btn-secondary" onclick="resetScoring()">Reset All</button>
+                            <button class="btn btn-secondary" onclick="exportData()">Export Data</button>
+                        </div>
+                    </div>
+                    
+                    <div class="leaderboard-section">
+                        <div class="sticky-leaderboard">
+                            <div style="background: var(--patriots-blue); color: var(--chalk-white); padding: 16px 20px; border-radius: var(--radius); margin-bottom: 16px;">
+                                <h3 style="font-size: 1.1em; text-transform: uppercase; letter-spacing: 1px; font-weight: 900; margin: 0;">Live Standings</h3>
+                                <p style="font-size: 0.8em; margin-top: 6px; opacity: 0.8; font-weight: 500;">Click any name to view their picks</p>
+                            </div>
+                            <div id="leaderboard" class="leaderboard"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Turn Announcement Modal -->
+    <div id="turnModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Now Drafting</h2>
+            <div class="player-name-large" id="modalPlayerName"></div>
+            <div class="pick-info">Round <span id="modalRound"></span> • Pick <span id="modalPickNumber"></span></div>
+            <button class="btn btn-success" onclick="startTurn()">Ready to Draft</button>
+            <button class="btn btn-secondary" onclick="skipPickFromModal()" style="margin-top: 12px;">Skip This Pick</button>
+        </div>
+    </div>
+    
+    <!-- Player Picks Modal -->
+    <div id="playerPicksModal" class="player-picks-modal" onclick="closePlayerPicksModal(event)">
+        <div class="player-picks-content" onclick="event.stopPropagation()">
+            <button class="close-modal-btn" onclick="closePlayerPicksModal()">×</button>
+            <h2 id="picksPlayerName"></h2>
+            
+            <div class="picks-section">
+                <h3>Common Picks (5 pts each)</h3>
+                <div id="picksCommonItems"></div>
+            </div>
+            
+            <div class="picks-section">
+                <h3>Drafted Items</h3>
+                <div id="picksDraftedItems"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const gameState = {
+            players: [],
+            currentView: 'setupView',
+            draftPool: [],
+            draftOrder: [],
+            currentPickIndex: 0,
+            currentRound: 1,
+            totalRounds: 8, // Updated to support 8 rounds
+            completedItems: new Set(),
+            commonPickResults: {
+                commercial: '',
+                q1Leader: '',
+                q2Leader: '',
+                q3Leader: '',
+                winner: '',
+                total: ''
+            }
+        };
+
+        // Initialize Draft Pool
+        function initDraftPool() {
+            gameState.draftPool = [
+                // Category 1: Patriots (15 items)
+                { id: 1, name: 'Drake Maye - Throws 2+ TD passes', category: 'Patriots', points: 7, multiPick: true, maxPicks: 3, currentPicks: 0 },
+                { id: 2, name: 'Drake Maye - Throws an interception', category: 'Patriots', points: 7, multiPick: false },
+                { id: 3, name: 'Drake Maye - Passes for 250+ yards', category: 'Patriots', points: 3, multiPick: false },
+                { id: 4, name: 'Stefon Diggs - 45+ receiving yards', category: 'Patriots', points: 3, multiPick: false },
+                { id: 5, name: 'Stefon Diggs - Scores a touchdown', category: 'Patriots', points: 7, multiPick: true, maxPicks: 3, currentPicks: 0 },
+                { id: 6, name: 'Hunter Henry - 40+ receiving yards', category: 'Patriots', points: 3, multiPick: false },
+                { id: 7, name: 'Hunter Henry - Catches a TD pass', category: 'Patriots', points: 7, multiPick: false },
+                { id: 8, name: 'Rhamondre Stevenson - 4+ receptions', category: 'Patriots', points: 7, multiPick: false },
+                { id: 9, name: 'TreVeyon Henderson - 5+ receiving yards', category: 'Patriots', points: 12, multiPick: false },
+                { id: 10, name: 'George Holani - 3+ rushing attempts', category: 'Patriots', points: 12, multiPick: false },
+                { id: 11, name: 'Patriots - Score 21+ points', category: 'Patriots', points: 7, multiPick: true, maxPicks: 3, currentPicks: 0 },
+                { id: 12, name: 'Patriots - Record 2+ sacks', category: 'Patriots', points: 7, multiPick: false },
+                { id: 13, name: 'Patriots - Force 2+ turnovers', category: 'Patriots', points: 7, multiPick: false },
+                { id: 14, name: 'Patriots - Convert on 4th down', category: 'Patriots', points: 12, multiPick: false },
+                { id: 15, name: 'Patriots - Block a kick', category: 'Patriots', points: 20, multiPick: false },
+                
+                // Category 2: Seahawks (15 items)
+                { id: 16, name: 'Sam Darnold - Throws 2+ TD passes', category: 'Seahawks', points: 7, multiPick: true, maxPicks: 3, currentPicks: 0 },
+                { id: 17, name: 'Sam Darnold - Throws an interception', category: 'Seahawks', points: 7, multiPick: false },
+                { id: 18, name: 'Sam Darnold - Passes for 275+ yards', category: 'Seahawks', points: 3, multiPick: false },
+                { id: 19, name: 'Cooper Kupp - 4+ receptions', category: 'Seahawks', points: 7, multiPick: false },
+                { id: 20, name: 'Cooper Kupp - 35+ receiving yards', category: 'Seahawks', points: 7, multiPick: true, maxPicks: 3, currentPicks: 0 },
+                { id: 21, name: 'Cooper Kupp - Longest reception 20+ yards', category: 'Seahawks', points: 12, multiPick: false },
+                { id: 22, name: 'Jaxon Smith-Njigba - Scores a touchdown', category: 'Seahawks', points: 7, multiPick: false },
+                { id: 23, name: 'Jaxon Smith-Njigba - 50+ receiving yards', category: 'Seahawks', points: 7, multiPick: false },
+                { id: 24, name: 'Kenneth Walker III - 60+ rushing yards', category: 'Seahawks', points: 7, multiPick: false },
+                { id: 25, name: 'Kenneth Walker III - Scores rushing TD', category: 'Seahawks', points: 7, multiPick: true, maxPicks: 3, currentPicks: 0 },
+                { id: 26, name: 'Seahawks - Score 24+ points', category: 'Seahawks', points: 7, multiPick: false },
+                { id: 27, name: 'Seahawks - Record 3+ sacks', category: 'Seahawks', points: 7, multiPick: false },
+                { id: 28, name: 'Seahawks - Force 2+ turnovers', category: 'Seahawks', points: 7, multiPick: false },
+                { id: 29, name: 'Seahawks - Successful fake play', category: 'Seahawks', points: 20, multiPick: false },
+                { id: 30, name: 'Seahawks - Return punt/kick 30+ yards', category: 'Seahawks', points: 12, multiPick: false },
+                
+                // Category 3: Game Events (14 items)
+                { id: 31, name: 'Game goes to Overtime', category: 'Game Events', points: 20, multiPick: false },
+                { id: 32, name: 'Safety scored', category: 'Game Events', points: 20, multiPick: false },
+                { id: 33, name: 'Successful 2-Point Conversion', category: 'Game Events', points: 20, multiPick: false },
+                { id: 34, name: 'Missed Field Goal', category: 'Game Events', points: 12, multiPick: true, maxPicks: 4, currentPicks: 0 },
+                { id: 35, name: 'Challenge Overturned', category: 'Game Events', points: 7, multiPick: true, maxPicks: 4, currentPicks: 0 },
+                { id: 36, name: 'Penalty Flag Picked Up', category: 'Game Events', points: 12, multiPick: true, maxPicks: 4, currentPicks: 0 },
+                { id: 37, name: 'Defensive/Special Teams TD', category: 'Game Events', points: 12, multiPick: true, maxPicks: 5, currentPicks: 0 },
+                { id: 38, name: 'Score in Final 2 Min of Half', category: 'Game Events', points: 7, multiPick: true, maxPicks: 4, currentPicks: 0 },
+                { id: 39, name: 'Total Points Over 46', category: 'Game Events', points: 3, multiPick: false },
+                { id: 40, name: 'Total Points Under 45', category: 'Game Events', points: 3, multiPick: false },
+                { id: 41, name: 'Coin Toss: Heads', category: 'Game Events', points: 3, multiPick: true, maxPicks: 4, currentPicks: 0 },
+                { id: 42, name: 'Game-Winning Score Final 2 Min', category: 'Game Events', points: 20, multiPick: false },
+                { id: 55, name: 'Soaking the Coach: Water/Clear', category: 'Game Events', points: 12, multiPick: true, maxPicks: 4, currentPicks: 0 },
+                { id: 56, name: 'Soaking the Coach: Gatorade', category: 'Game Events', points: 12, multiPick: true, maxPicks: 4, currentPicks: 0 },
+                
+                // Category 4: Commercials (12 items)
+                { id: 43, name: 'Car/Truck Commercial', category: 'Commercials', points: 3, multiPick: true, maxPicks: 5, currentPicks: 0 },
+                { id: 44, name: 'Beer Commercial', category: 'Commercials', points: 3, multiPick: true, maxPicks: 5, currentPicks: 0 },
+                { id: 45, name: 'Celebrity Cameo', category: 'Commercials', points: 7, multiPick: true, maxPicks: 3, currentPicks: 0 },
+                { id: 46, name: 'Talking Animal', category: 'Commercials', points: 12, multiPick: true, maxPicks: 4, currentPicks: 0 },
+                { id: 47, name: 'AI/Tech Company Ad', category: 'Commercials', points: 7, multiPick: true, maxPicks: 5, currentPicks: 0 },
+                { id: 48, name: 'Movie Trailer', category: 'Commercials', points: 12, multiPick: true, maxPicks: 4, currentPicks: 0 },
+                { id: 49, name: 'Fast Food Ad', category: 'Commercials', points: 7, multiPick: true, maxPicks: 5, currentPicks: 0 },
+                { id: 50, name: 'Insurance Ad', category: 'Commercials', points: 7, multiPick: true, maxPicks: 5, currentPicks: 0 },
+                { id: 51, name: 'Crypto/Finance Ad', category: 'Commercials', points: 12, multiPick: false },
+                { id: 52, name: 'Beverage (Non-Beer)', category: 'Commercials', points: 3, multiPick: true, maxPicks: 5, currentPicks: 0 },
+                { id: 53, name: 'Humor/Comedy Focused', category: 'Commercials', points: 7, multiPick: true, maxPicks: 3, currentPicks: 0 },
+                { id: 54, name: 'Emotional/Heartwarming', category: 'Commercials', points: 12, multiPick: true, maxPicks: 4, currentPicks: 0 }
+            ];
+        }
+
+        // Player Management
+        function addPlayer() {
+            const playerNum = gameState.players.length + 1;
+            const player = {
+                id: playerNum,
+                name: `Player ${playerNum}`,
+                commonPicks: {
+                    commercial: '',
+                    q1Leader: '',
+                    q2Leader: '',
+                    q3Leader: '',
+                    winner: '',
+                    total: ''
+                },
+                draftedItems: [],
+                score: 0
+            };
+            gameState.players.push(player);
+            renderPlayerList();
+            updateStartButton();
+        }
+
+        function removePlayer(id) {
+            gameState.players = gameState.players.filter(p => p.id !== id);
+            renderPlayerList();
+            updateStartButton();
+        }
+
+        function updatePlayerName(id, name) {
+            const player = gameState.players.find(p => p.id === id);
+            if (player) {
+                player.name = name || `Player ${id}`;
+            }
+        }
+        
+        function updatePlayerCommonPick(id, pickType, value) {
+            const player = gameState.players.find(p => p.id === id);
+            if (player) {
+                player.commonPicks[pickType] = value;
+                updateStartButton();
+                renderPlayerList(); // Re-render to update Done button state
+            }
+        }
+
+        function renderPlayerList() {
+            const container = document.getElementById('playerList');
+            container.innerHTML = gameState.players.map(player => {
+                const isComplete = player.commonPicks.commercial && player.commonPicks.q1Leader && 
+                                  player.commonPicks.q2Leader && player.commonPicks.q3Leader && 
+                                  player.commonPicks.winner && player.commonPicks.total;
+                const isCollapsed = player.commonPicksCollapsed || false;
+                
+                return `
+                <div class="player-card ${isComplete && isCollapsed ? 'completed' : ''}">
+                    <div class="player-item">
+                        <input type="text" 
+                               value="${player.name}" 
+                               onchange="updatePlayerName(${player.id}, this.value)"
+                               placeholder="Enter player name">
+                        
+                        <div class="player-item-actions">
+                            ${isComplete && isCollapsed ? '<span class="completion-badge">✓ Ready</span>' : ''}
+                            ${isComplete && isCollapsed ? 
+                                `<button class="btn btn-edit btn-secondary" onclick="expandCommonPicks(${player.id})">Edit Picks</button>` : 
+                                ''
+                            }
+                            <button class="btn btn-danger" onclick="removePlayer(${player.id})">Remove</button>
+                        </div>
+                    </div>
+                    
+                    <div class="player-common-picks ${isCollapsed ? 'collapsed' : ''}">
+                        <div class="common-picks-header">
+                            <h4>Common Picks (5 pts each)</h4>
+                            <button class="btn btn-done" 
+                                    onclick="collapseCommonPicks(${player.id})"
+                                    ${!isComplete ? 'disabled' : ''}>Done</button>
+                        </div>
+                        
+                        <div class="common-picks-content">
+                            <div class="common-pick-mini">
+                                <label>First Commercial</label>
+                                <select onchange="updatePlayerCommonPick(${player.id}, 'commercial', this.value)">
+                                    <option value="">-- Select --</option>
+                                    <option value="Beer" ${player.commonPicks.commercial === 'Beer' ? 'selected' : ''}>Beer</option>
+                                    <option value="Car/Truck" ${player.commonPicks.commercial === 'Car/Truck' ? 'selected' : ''}>Car/Truck</option>
+                                    <option value="Tech/AI" ${player.commonPicks.commercial === 'Tech/AI' ? 'selected' : ''}>Tech/AI</option>
+                                </select>
+                            </div>
+                            
+                            <div class="common-pick-mini">
+                                <label>Q1 Leader</label>
+                                <select onchange="updatePlayerCommonPick(${player.id}, 'q1Leader', this.value)">
+                                    <option value="">-- Select --</option>
+                                    <option value="Patriots" ${player.commonPicks.q1Leader === 'Patriots' ? 'selected' : ''}>Patriots</option>
+                                    <option value="Seahawks" ${player.commonPicks.q1Leader === 'Seahawks' ? 'selected' : ''}>Seahawks</option>
+                                    <option value="Tied" ${player.commonPicks.q1Leader === 'Tied' ? 'selected' : ''}>Tied</option>
+                                </select>
+                            </div>
+                            
+                            <div class="common-pick-mini">
+                                <label>Q2 Leader (Halftime)</label>
+                                <select onchange="updatePlayerCommonPick(${player.id}, 'q2Leader', this.value)">
+                                    <option value="">-- Select --</option>
+                                    <option value="Patriots" ${player.commonPicks.q2Leader === 'Patriots' ? 'selected' : ''}>Patriots</option>
+                                    <option value="Seahawks" ${player.commonPicks.q2Leader === 'Seahawks' ? 'selected' : ''}>Seahawks</option>
+                                    <option value="Tied" ${player.commonPicks.q2Leader === 'Tied' ? 'selected' : ''}>Tied</option>
+                                </select>
+                            </div>
+                            
+                            <div class="common-pick-mini">
+                                <label>Q3 Leader</label>
+                                <select onchange="updatePlayerCommonPick(${player.id}, 'q3Leader', this.value)">
+                                    <option value="">-- Select --</option>
+                                    <option value="Patriots" ${player.commonPicks.q3Leader === 'Patriots' ? 'selected' : ''}>Patriots</option>
+                                    <option value="Seahawks" ${player.commonPicks.q3Leader === 'Seahawks' ? 'selected' : ''}>Seahawks</option>
+                                    <option value="Tied" ${player.commonPicks.q3Leader === 'Tied' ? 'selected' : ''}>Tied</option>
+                                </select>
+                            </div>
+                            
+                            <div class="common-pick-mini">
+                                <label>Game Winner</label>
+                                <select onchange="updatePlayerCommonPick(${player.id}, 'winner', this.value)">
+                                    <option value="">-- Select --</option>
+                                    <option value="Patriots" ${player.commonPicks.winner === 'Patriots' ? 'selected' : ''}>Patriots</option>
+                                    <option value="Seahawks" ${player.commonPicks.winner === 'Seahawks' ? 'selected' : ''}>Seahawks</option>
+                                </select>
+                            </div>
+                            
+                            <div class="common-pick-mini">
+                                <label>Total Points</label>
+                                <select onchange="updatePlayerCommonPick(${player.id}, 'total', this.value)">
+                                    <option value="">-- Select --</option>
+                                    <option value="Over 46" ${player.commonPicks.total === 'Over 46' ? 'selected' : ''}>Over 46</option>
+                                    <option value="Under 45" ${player.commonPicks.total === 'Under 45' ? 'selected' : ''}>Under 45</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+        
+        function collapseCommonPicks(playerId) {
+            const player = gameState.players.find(p => p.id === playerId);
+            if (player) {
+                const isComplete = player.commonPicks.commercial && player.commonPicks.q1Leader && 
+                                  player.commonPicks.q2Leader && player.commonPicks.q3Leader && 
+                                  player.commonPicks.winner && player.commonPicks.total;
+                if (!isComplete) {
+                    // This shouldn't happen since button is disabled, but just in case
+                    return;
+                }
+                player.commonPicksCollapsed = true;
+                renderPlayerList();
+            }
+        }
+        
+        function expandCommonPicks(playerId) {
+            const player = gameState.players.find(p => p.id === playerId);
+            if (player) {
+                player.commonPicksCollapsed = false;
+                renderPlayerList();
+            }
+        }
+
+        function updateStartButton() {
+            const btn = document.getElementById('startBtn');
+            
+            // Check: at least 2 players
+            if (gameState.players.length < 2) {
+                btn.disabled = true;
+                return;
+            }
+            
+            // Check: all players have filled out their 6 common picks
+            const allPicksComplete = gameState.players.every(player => 
+                player.commonPicks.commercial && 
+                player.commonPicks.q1Leader && 
+                player.commonPicks.q2Leader && 
+                player.commonPicks.q3Leader && 
+                player.commonPicks.winner && 
+                player.commonPicks.total
+            );
+            
+            btn.disabled = !allPicksComplete;
+        }
+
+        // View Management
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            gameState.currentView = viewId;
+        }
+
+        // Draft
+        function startDraft() {
+            if (gameState.players.length < 2) {
+                alert('You need at least 2 players to start!');
+                return;
+            }
+            
+            // Check all common picks are complete
+            const allComplete = gameState.players.every(p => 
+                p.commonPicks.commercial && p.commonPicks.q1Leader && 
+                p.commonPicks.q2Leader && p.commonPicks.q3Leader && 
+                p.commonPicks.winner && p.commonPicks.total
+            );
+            
+            if (!allComplete) {
+                alert('All players must complete their 6 common picks!');
+                return;
+            }
+            
+            // Randomize draft order
+            gameState.draftOrder = [...gameState.players].sort(() => Math.random() - 0.5);
+            
+            initDraftPool();
+            showView('draftView');
+            renderDraftPool();
+            renderPlayerStatusList();
+            showTurnModal();
+        }
+
+        function renderDraftPool() {
+            const container = document.getElementById('draftPool');
+            const categories = ['Patriots', 'Seahawks', 'Game Events', 'Commercials'];
+            
+            container.innerHTML = categories.map(cat => {
+                const items = gameState.draftPool.filter(item => item.category === cat);
+                return `
+                    <div class="category-section">
+                        <div class="category-header">${cat}</div>
+                        <div class="category-items">
+                            ${items.map(item => {
+                                const isAvailable = item.multiPick ? item.currentPicks < item.maxPicks : !item.drafted;
+                                return `
+                                    <div class="draft-item ${!isAvailable ? 'unavailable' : ''}" 
+                                         onclick="${isAvailable ? `selectDraftItem(${item.id})` : ''}">
+                                        <div class="item-info">
+                                            <div class="item-name">${item.name}</div>
+                                            <div class="item-meta">${item.category}</div>
+                                        </div>
+                                        <div style="display: flex; align-items: center;">
+                                            ${item.multiPick ? `<span class="multi-pick-badge">${item.currentPicks}/${item.maxPicks}</span>` : ''}
+                                            <span class="item-points">${item.points}pts</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectDraftItem(itemId) {
+            const item = gameState.draftPool.find(i => i.id === itemId);
+            const currentPlayer = gameState.draftOrder[gameState.currentPickIndex];
+            
+            if (!item) return;
+            
+            // Check availability
+            if (item.multiPick) {
+                if (item.currentPicks >= item.maxPicks) {
+                    alert('This item has reached maximum picks!');
+                    return;
+                }
+                item.currentPicks++;
+            } else if (item.drafted) {
+                alert('This item has already been drafted!');
+                return;
+            } else {
+                item.drafted = true;
+            }
+            
+            // Add to player
+            currentPlayer.draftedItems.push(item);
+            
+            // Move to next pick
+            nextPick();
+        }
+
+        function skipPick() {
+            if (confirm('Skip this pick? The player will not select anything this turn.')) {
+                nextPick();
+            }
+        }
+        
+        function skipPickFromModal() {
+            document.getElementById('turnModal').classList.remove('active');
+            skipPick();
+        }
+
+        function nextPick() {
+            // Calculate next pick
+            gameState.currentPickIndex++;
+            
+            // Check if round complete
+            if (gameState.currentPickIndex >= gameState.draftOrder.length) {
+                gameState.currentRound++;
+                gameState.currentPickIndex = 0;
+                
+                // Reverse order for snake draft
+                if (gameState.currentRound % 2 === 0) {
+                    gameState.draftOrder.reverse();
+                }
+            }
+            
+            // Check if draft complete
+            if (gameState.currentRound > gameState.totalRounds) {
+                finishDraft();
+                return;
+            }
+            
+            // Check if we have enough items for another round
+            const availableItems = gameState.draftPool.filter(item => 
+                item.multiPick ? item.currentPicks < item.maxPicks : !item.drafted
+            ).length;
+            
+            if (availableItems < gameState.players.length) {
+                finishDraft();
+                return;
+            }
+            
+            renderDraftPool();
+            renderPlayerStatusList();
+            showTurnModal();
+        }
+        
+        // Turn Modal
+        function showTurnModal() {
+            const currentPlayer = gameState.draftOrder[gameState.currentPickIndex];
+            const pickNumber = (gameState.currentRound - 1) * gameState.players.length + gameState.currentPickIndex + 1;
+            
+            document.getElementById('modalPlayerName').textContent = currentPlayer.name;
+            document.getElementById('modalRound').textContent = gameState.currentRound;
+            document.getElementById('modalPickNumber').textContent = pickNumber;
+            document.getElementById('turnModal').classList.add('active');
+        }
+        
+        function startTurn() {
+            document.getElementById('turnModal').classList.remove('active');
+        }
+        
+        // Sidebar Rendering
+        function renderPlayerStatusList() {
+            const container = document.getElementById('playerStatusList');
+            const currentPlayer = gameState.draftOrder[gameState.currentPickIndex];
+            
+            // Update round info
+            document.getElementById('sidebarCurrentRound').textContent = gameState.currentRound;
+            document.getElementById('sidebarTotalRounds').textContent = gameState.totalRounds;
+            
+            container.innerHTML = gameState.draftOrder.map(player => {
+                const isActive = player.id === currentPlayer.id;
+                const pickCount = player.draftedItems.length;
+                const totalPicks = gameState.currentRound > gameState.totalRounds ? pickCount : gameState.totalRounds;
+                
+                return `
+                    <div class="player-status-item ${isActive ? 'active' : ''}">
+                        <div class="player-status-name">${player.name}</div>
+                        <div class="player-status-picks">${pickCount}/${totalPicks}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function finishDraft() {
+            alert('Draft Complete! Moving to scoring...');
+            renderScoringGrid();
+            showView('scoringView');
+        }
+
+        // Scoring
+        function renderScoringGrid() {
+            const container = document.getElementById('scoringGrid');
+            
+            // Get all unique items from all players
+            const allItems = new Set();
+            gameState.players.forEach(player => {
+                player.draftedItems.forEach(item => allItems.add(item.id));
+            });
+            
+            const uniqueItems = Array.from(allItems).map(id => 
+                gameState.draftPool.find(item => item.id === id)
+            );
+            
+            // Group by category
+            const categories = ['Patriots', 'Seahawks', 'Game Events', 'Commercials'];
+            
+            container.innerHTML = categories.map(category => {
+                const categoryItems = uniqueItems
+                    .filter(item => item.category === category)
+                    .sort((a, b) => a.points - b.points); // Sort by points ascending (least to most)
+                
+                if (categoryItems.length === 0) return '';
+                
+                return `
+                    <div class="scoring-category">
+                        <div class="scoring-category-header">${category}</div>
+                        <div class="scoring-grid">
+                            ${categoryItems.map(item => {
+                                const isCompleted = gameState.completedItems.has(item.id);
+                                
+                                // Find which players have this item
+                                const playersWithItem = gameState.players
+                                    .filter(p => p.draftedItems.some(di => di.id === item.id))
+                                    .map(p => p.name);
+                                
+                                return `
+                                    <div class="scoring-item ${isCompleted ? 'completed' : ''}">
+                                        <div class="item-info">
+                                            <div class="item-name">${item.name}</div>
+                                            <div class="item-meta">${item.points} points</div>
+                                            ${playersWithItem.length > 0 ? 
+                                                `<div class="item-players">${playersWithItem.join(', ')}</div>` : 
+                                                ''
+                                            }
+                                        </div>
+                                        <div class="toggle-btn ${isCompleted ? 'active' : ''}" 
+                                             onclick="toggleItem(${item.id})"></div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Render common pick player lists
+            renderCommonPickPlayerLists();
+            
+            // Initial leaderboard render
+            renderLeaderboard();
+        }
+        
+        function renderCommonPickPlayerLists() {
+            // First Commercial
+            const beerPicks = gameState.players.filter(p => p.commonPicks.commercial === 'Beer').map(p => p.name);
+            const carPicks = gameState.players.filter(p => p.commonPicks.commercial === 'Car/Truck').map(p => p.name);
+            const techPicks = gameState.players.filter(p => p.commonPicks.commercial === 'Tech/AI').map(p => p.name);
+            let commText = '';
+            if (beerPicks.length > 0) commText += `Beer: ${beerPicks.join(', ')}`;
+            if (carPicks.length > 0) {
+                if (commText) commText += ' • ';
+                commText += `Car: ${carPicks.join(', ')}`;
+            }
+            if (techPicks.length > 0) {
+                if (commText) commText += ' • ';
+                commText += `Tech: ${techPicks.join(', ')}`;
+            }
+            document.getElementById('commercialPlayers').textContent = commText || 'No picks yet';
+            
+            // Q1 Leader
+            const q1Patriots = gameState.players.filter(p => p.commonPicks.q1Leader === 'Patriots').map(p => p.name);
+            const q1Seahawks = gameState.players.filter(p => p.commonPicks.q1Leader === 'Seahawks').map(p => p.name);
+            const q1Tied = gameState.players.filter(p => p.commonPicks.q1Leader === 'Tied').map(p => p.name);
+            let q1Text = '';
+            if (q1Patriots.length > 0) q1Text += `Patriots: ${q1Patriots.join(', ')}`;
+            if (q1Seahawks.length > 0) {
+                if (q1Text) q1Text += ' • ';
+                q1Text += `Seahawks: ${q1Seahawks.join(', ')}`;
+            }
+            if (q1Tied.length > 0) {
+                if (q1Text) q1Text += ' • ';
+                q1Text += `Tied: ${q1Tied.join(', ')}`;
+            }
+            document.getElementById('q1LeaderPlayers').textContent = q1Text || 'No picks yet';
+            
+            // Q2 Leader
+            const q2Patriots = gameState.players.filter(p => p.commonPicks.q2Leader === 'Patriots').map(p => p.name);
+            const q2Seahawks = gameState.players.filter(p => p.commonPicks.q2Leader === 'Seahawks').map(p => p.name);
+            const q2Tied = gameState.players.filter(p => p.commonPicks.q2Leader === 'Tied').map(p => p.name);
+            let q2Text = '';
+            if (q2Patriots.length > 0) q2Text += `Patriots: ${q2Patriots.join(', ')}`;
+            if (q2Seahawks.length > 0) {
+                if (q2Text) q2Text += ' • ';
+                q2Text += `Seahawks: ${q2Seahawks.join(', ')}`;
+            }
+            if (q2Tied.length > 0) {
+                if (q2Text) q2Text += ' • ';
+                q2Text += `Tied: ${q2Tied.join(', ')}`;
+            }
+            document.getElementById('q2LeaderPlayers').textContent = q2Text || 'No picks yet';
+            
+            // Q3 Leader
+            const q3Patriots = gameState.players.filter(p => p.commonPicks.q3Leader === 'Patriots').map(p => p.name);
+            const q3Seahawks = gameState.players.filter(p => p.commonPicks.q3Leader === 'Seahawks').map(p => p.name);
+            const q3Tied = gameState.players.filter(p => p.commonPicks.q3Leader === 'Tied').map(p => p.name);
+            let q3Text = '';
+            if (q3Patriots.length > 0) q3Text += `Patriots: ${q3Patriots.join(', ')}`;
+            if (q3Seahawks.length > 0) {
+                if (q3Text) q3Text += ' • ';
+                q3Text += `Seahawks: ${q3Seahawks.join(', ')}`;
+            }
+            if (q3Tied.length > 0) {
+                if (q3Text) q3Text += ' • ';
+                q3Text += `Tied: ${q3Tied.join(', ')}`;
+            }
+            document.getElementById('q3LeaderPlayers').textContent = q3Text || 'No picks yet';
+            
+            // Winner
+            const patriotsPicks = gameState.players.filter(p => p.commonPicks.winner === 'Patriots').map(p => p.name);
+            const seahawksPicks = gameState.players.filter(p => p.commonPicks.winner === 'Seahawks').map(p => p.name);
+            let winnerText = '';
+            if (patriotsPicks.length > 0) winnerText += `Patriots: ${patriotsPicks.join(', ')}`;
+            if (seahawksPicks.length > 0) {
+                if (winnerText) winnerText += ' • ';
+                winnerText += `Seahawks: ${seahawksPicks.join(', ')}`;
+            }
+            document.getElementById('winnerPlayers').textContent = winnerText || 'No picks yet';
+            
+            // Total
+            const overPicks = gameState.players.filter(p => p.commonPicks.total === 'Over 46').map(p => p.name);
+            const underPicks = gameState.players.filter(p => p.commonPicks.total === 'Under 45').map(p => p.name);
+            let totalText = '';
+            if (overPicks.length > 0) totalText += `Over 46: ${overPicks.join(', ')}`;
+            if (underPicks.length > 0) {
+                if (totalText) totalText += ' • ';
+                totalText += `Under 45: ${underPicks.join(', ')}`;
+            }
+            document.getElementById('totalPlayers').textContent = totalText || 'No picks yet';
+        }
+
+        function toggleItem(itemId) {
+            if (gameState.completedItems.has(itemId)) {
+                gameState.completedItems.delete(itemId);
+            } else {
+                gameState.completedItems.add(itemId);
+            }
+            
+            calculateScores();
+            renderScoringGrid();
+            renderLeaderboard();
+        }
+        
+        function updateCommonPickResult(pickType, value) {
+            gameState.commonPickResults[pickType] = value;
+            calculateScores();
+            renderLeaderboard();
+        }
+
+        function resetScoring() {
+            if (confirm('Reset all scoring? This cannot be undone.')) {
+                gameState.completedItems.clear();
+                gameState.commonPickResults = { 
+                    commercial: '', 
+                    q1Leader: '', 
+                    q2Leader: '', 
+                    q3Leader: '', 
+                    winner: '', 
+                    total: '' 
+                };
+                document.getElementById('commercialResult').value = '';
+                document.getElementById('q1LeaderResult').value = '';
+                document.getElementById('q2LeaderResult').value = '';
+                document.getElementById('q3LeaderResult').value = '';
+                document.getElementById('winnerResult').value = '';
+                document.getElementById('totalResult').value = '';
+                calculateScores();
+                renderScoringGrid();
+                renderLeaderboard();
+            }
+        }
+
+        function calculateScores() {
+            gameState.players.forEach(player => {
+                let score = 0;
+                
+                // Common picks (5 points each)
+                if (gameState.commonPickResults.commercial && 
+                    player.commonPicks.commercial === gameState.commonPickResults.commercial) {
+                    score += 5;
+                }
+                if (gameState.commonPickResults.q1Leader && 
+                    player.commonPicks.q1Leader === gameState.commonPickResults.q1Leader) {
+                    score += 5;
+                }
+                if (gameState.commonPickResults.q2Leader && 
+                    player.commonPicks.q2Leader === gameState.commonPickResults.q2Leader) {
+                    score += 5;
+                }
+                if (gameState.commonPickResults.q3Leader && 
+                    player.commonPicks.q3Leader === gameState.commonPickResults.q3Leader) {
+                    score += 5;
+                }
+                if (gameState.commonPickResults.winner && 
+                    player.commonPicks.winner === gameState.commonPickResults.winner) {
+                    score += 5;
+                }
+                if (gameState.commonPickResults.total && 
+                    player.commonPicks.total === gameState.commonPickResults.total) {
+                    score += 5;
+                }
+                
+                // Drafted items
+                player.draftedItems.forEach(item => {
+                    if (gameState.completedItems.has(item.id)) {
+                        score += item.points;
+                    }
+                });
+                
+                player.score = score;
+            });
+        }
+
+        // Leaderboard
+        function renderLeaderboard() {
+            const container = document.getElementById('leaderboard');
+            const sortedPlayers = [...gameState.players].sort((a, b) => b.score - a.score);
+            
+            container.innerHTML = sortedPlayers.map((player, index) => {
+                const rank = index + 1;
+                const rankClass = rank === 1 ? 'first' : rank === 2 ? 'second' : rank === 3 ? 'third' : '';
+                const completedCount = player.draftedItems.filter(item => 
+                    gameState.completedItems.has(item.id)
+                ).length;
+                
+                return `
+                    <div class="leaderboard-item ${rankClass}">
+                        <div class="rank">#${rank}</div>
+                        <div class="player-info">
+                            <div class="player-name" style="cursor: pointer;" onclick="showPlayerPicks(${player.id})">${player.name}</div>
+                            <div class="player-items">${completedCount}/${player.draftedItems.length} items hit</div>
+                        </div>
+                        <div class="player-score">${player.score}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Player Picks Modal
+        function showPlayerPicks(playerId) {
+            const player = gameState.players.find(p => p.id === playerId);
+            if (!player) return;
+            
+            document.getElementById('picksPlayerName').textContent = player.name;
+            
+            // Common picks
+            const commonPicksHtml = `
+                <div class="pick-item">
+                    <span>First Commercial: ${player.commonPicks.commercial || 'Not selected'}</span>
+                    <span class="pick-points">5 pts</span>
+                </div>
+                <div class="pick-item">
+                    <span>Q1 Leader: ${player.commonPicks.q1Leader || 'Not selected'}</span>
+                    <span class="pick-points">5 pts</span>
+                </div>
+                <div class="pick-item">
+                    <span>Q2 Leader: ${player.commonPicks.q2Leader || 'Not selected'}</span>
+                    <span class="pick-points">5 pts</span>
+                </div>
+                <div class="pick-item">
+                    <span>Q3 Leader: ${player.commonPicks.q3Leader || 'Not selected'}</span>
+                    <span class="pick-points">5 pts</span>
+                </div>
+                <div class="pick-item">
+                    <span>Winner: ${player.commonPicks.winner || 'Not selected'}</span>
+                    <span class="pick-points">5 pts</span>
+                </div>
+                <div class="pick-item">
+                    <span>Total: ${player.commonPicks.total || 'Not selected'}</span>
+                    <span class="pick-points">5 pts</span>
+                </div>
+            `;
+            document.getElementById('picksCommonItems').innerHTML = commonPicksHtml;
+            
+            // Drafted items
+            const draftedItemsHtml = player.draftedItems.map(item => {
+                const isCompleted = gameState.completedItems.has(item.id);
+                return `
+                    <div class="pick-item" style="${isCompleted ? 'border-color: var(--field-green); background: rgba(74, 93, 57, 0.05);' : ''}">
+                        <span>${item.name}</span>
+                        <span class="pick-points">${item.points} pts ${isCompleted ? '✓' : ''}</span>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('picksDraftedItems').innerHTML = draftedItemsHtml;
+            
+            document.getElementById('playerPicksModal').classList.add('active');
+        }
+        
+        function closePlayerPicksModal(event) {
+            // If no event (called directly from close button) or clicking the overlay background
+            if (!event || event.target.id === 'playerPicksModal') {
+                document.getElementById('playerPicksModal').classList.remove('active');
+            }
+        }
+
+        // Export
+        function exportData() {
+            const data = {
+                players: gameState.players.map(p => ({
+                    name: p.name,
+                    commonPicks: p.commonPicks,
+                    draftedItems: p.draftedItems.map(i => i.name),
+                    score: p.score
+                })),
+                completedItems: Array.from(gameState.completedItems),
+                commonPickResults: gameState.commonPickResults
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'superbowl-chaos-draft-results.json';
+            a.click();
+        }
+
+        // Initialize
+        initDraftPool();
+        for (let i = 0; i < 3; i++) {
+            addPlayer();
+        }
+    </script>
+</body>
+</html>
